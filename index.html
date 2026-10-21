@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Solar Time (UST) Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .sol-symbol {
+            font-size: 0.8em;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .clock-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .clock-label {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .standard-time {
+            font-size: 1.3em;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 25px;
+        }
+        
+        .solar-display {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 15px;
+        }
+        
+        .time-unit {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .separator {
+            font-size: 3.5em;
+            color: #667eea;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        
+        .solar-time {
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 15px;
+        }
+        
+        .calculator-section {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .calc-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .unit-label {
+            color: #666;
+            font-weight: 600;
+            min-width: 40px;
+        }
+        
+        .result-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin-top: 20px;
+        }
+        
+        .result-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .result-value {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+            font-size: 0.9em;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .info-box strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Unified Solar Time</div>
+            <div class="subtitle">Metric Time System <span class="sol-symbol">⊙</span></div>
+        </div>
+        
+        <!-- Current Time Clock -->
+        <div class="clock-section">
+            <div class="clock-label">Current Standard Time (UTC)</div>
+            <div class="standard-time" id="standardTime">00:00:00</div>
+            
+            <div class="clock-label" style="margin-top: 20px;">Current Unified Solar Time</div>
+            <div class="solar-display">
+                <div class="time-unit" id="solHours">0</div>
+                <div class="separator">.</div>
+                <div class="time-unit" id="solMinutes">00</div>
+                <div class="separator">.</div>
+                <div class="time-unit" id="solSeconds">00</div>
+            </div>
+            <div class="solar-time">
+                <span id="solFormat">0.0000 S</span> (Centisol.Millisol.Microsol)
+            </div>
+        </div>
+        
+        <!-- Calculator -->
+        <div class="calculator-section">
+            <div class="calc-title">Convert Standard Time to UST</div>
+            
+            <div class="input-group">
+                <label class="input-label">Enter Standard Time</label>
+                <div class="input-row">
+                    <input type="number" id="calcHours" min="0" max="23" placeholder="HH" value="12">
+                    <div class="unit-label">:</div>
+                    <input type="number" id="calcMinutes" min="0" max="59" placeholder="MM" value="00">
+                    <div class="unit-label">:</div>
+                    <input type="number" id="calcSeconds" min="0" max="59" placeholder="SS" value="00">
+                </div>
+            </div>
+            
+            <div class="result-box">
+                <div class="result-label">Unified Solar Time:</div>
+                <div class="result-value" id="calcResult">5.0000 S</div>
+            </div>
+            
+            <div class="info-box">
+                <strong>System Info:</strong><br>
+                • 1 Sol (S) = 1 full day (86,400 standard seconds)<br>
+                • 1 Centisol (cS) = 4 standard hours<br>
+                • 1 Millisol (mS) = 86.4 standard seconds<br>
+                • 1 Microsol (μS) = 0.864 standard seconds
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Conversion functions
+        function standardToSol(hours, minutes, seconds) {
+            // Convert standard time to total seconds
+            const totalStdSeconds = hours * 3600 + minutes * 60 + seconds;
+            
+            // Convert to metric seconds (1 metric second = 0.864 std seconds)
+            const totalMetricSeconds = totalStdSeconds / 0.864;
+            
+            // In our system: 100k metric seconds in a day
+            // 10 centisols per day, 100 millisols per centisol, 100 microsols per millisol
+            const centisols = Math.floor(totalMetricSeconds / 10000);
+            const remainder1 = totalMetricSeconds % 10000;
+            const millisols = Math.floor(remainder1 / 100);
+            const microsols = Math.floor(remainder1 % 100);
+            
+            return {
+                centisols: centisols,
+                millisols: millisols,
+                microsols: microsols,
+                totalSols: totalMetricSeconds / 100000
+            };
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getUTCHours()).padStart(2, '0');
+            const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+            
+            document.getElementById('standardTime').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            const sol = standardToSol(now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+            
+            document.getElementById('solHours').textContent = String(sol.centisols).padStart(1, '0');
+            document.getElementById('solMinutes').textContent = String(sol.millisols).padStart(2, '0');
+            document.getElementById('solSeconds').textContent = String(sol.microsols).padStart(2, '0');
+            
+            const solFormatted = sol.totalSols.toFixed(4);
+            document.getElementById('solFormat').textContent = `${solFormatted} S`;
+        }
+        
+        function calculateFromInput() {
+            const h = parseInt(document.getElementById('calcHours').value) || 0;
+            const m = parseInt(document.getElementById('calcMinutes').value) || 0;
+            const s = parseInt(document.getElementById('calcSeconds').value) || 0;
+            
+            // Validate inputs
+            if (h > 23 || m > 59 || s > 59 || h < 0 || m < 0 || s < 0) {
+                document.getElementById('calcResult').textContent = 'Invalid time';
+                return;
+            }
+            
+            const sol = standardToSol(h, m, s);
+            const solFormatted = sol.totalSols.toFixed(4);
+            document.getElementById('calcResult').textContent = `${solFormatted} S`;
+        }
+        
+        // Event listeners for calculator
+        document.getElementById('calcHours').addEventListener('input', calculateFromInput);
+        document.getElementById('calcMinutes').addEventListener('input', calculateFromInput);
+        document.getElementById('calcSeconds').addEventListener('input', calculateFromInput);
+        
+        // Initialize clock
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Initial calculation
+        calculateFromInput();
+    </script>
+</body>
+</html>
